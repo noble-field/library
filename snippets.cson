@@ -1,0 +1,242 @@
+# Your snippets
+#
+# Atom snippets allow you to enter a simple prefix in the editor and hit tab to
+# expand the prefix into a larger code block with templated values.
+#
+# You can create a new snippet in this file by typing "snip" and then hitting
+# tab.
+#
+# An example CoffeeScript snippet to expand log to console.log:
+#
+# '.source.coffee':
+#   'Console log':
+#     'prefix': 'log'
+#     'body': 'console.log $1'
+#
+# Each scope (e.g. '.source.coffee' above) can only be declared once.
+#
+# This file uses CoffeeScript Object Notation (CSON).
+# If you are unfamiliar with CSON, you can read more about it in the
+# Atom Flight Manual:
+# http://flight-manual.atom.io/using-atom/sections/basic-customization/#_cson
+'.source.cpp':
+    'Template':
+        'prefix': 'template'
+        'body':
+            """
+#include <bits/stdc++.h>
+
+#define rep(i,n) for(int i=0;i<(int)(n);i++)
+#define FOR(i,n,m) for(int i=(int)(n); i<=(int)(m); i++)
+#define ITR(x,c) for(__typeof(c.begin()) x=c.begin();x!=c.end();x++)
+#define RITR(x,c) for(__typeof(c.rbegin()) x=c.rbegin();x!=c.rend();x++)
+#define setp(n) fixed << setprecision(n)
+
+#define ld long double
+#define ll long long
+#define vll vector<ll>
+#define vi vector<int>
+#define pll pair<ll,ll>
+#define pi pair<int,int>
+
+#define all(a) (a.begin()),(a.end())
+#define rall(a) (a.rbegin()),(a.rend())
+#define fi first
+#define se second
+#define pb push_back
+#define mp make_pair
+#define ins insert
+
+using namespace std;
+
+/* Some Libraries */
+
+//-------------------------------------------------
+
+int main(void)
+{
+	cin.tie(0);
+	ios::sync_with_stdio(false);
+    $1
+	return 0;
+}
+            """
+    'ModInt':
+        'prefix': 'modint'
+        'body':"""
+//-------------------------------------------------
+//--ModInt
+//-------------------------------------------------
+const ::std::uint_fast64_t MOD = 1e9+7;
+
+class mint{
+private:
+    using value_type = ::std::uint_fast64_t;
+    value_type n;
+public:
+    mint():n(0){}
+    mint(value_type _n):n(_n%MOD){}
+    mint(const mint &m):n(m.n){}
+
+    friend ::std::ostream& operator<<(::std::ostream &os, const mint &a){
+		return os << a.n;
+	}
+    friend ::std::istream& operator>>(::std::istream &is, mint &a){
+        value_type temp; is>>temp;
+        a = mint(temp);
+        return is;
+    }
+
+    mint& operator+=(const mint &m){n+=m.n; n=(n<MOD)?n:n-MOD; return *this;}
+    mint& operator-=(const mint &m){n+=MOD-m.n; n=(n<MOD)?n:n-MOD; return *this;}
+    mint& operator*=(const mint &m){n=n*m.n%MOD; return *this;}
+    mint& operator/=(const mint &m){return *this*=m.inv();}
+    mint& operator++(){return *this+=1;}
+    mint& operator--(){return *this-=1;}
+
+    mint operator+(const mint &m) const {return mint(*this)+=m;}
+    mint operator-(const mint &m) const {return mint(*this)-=m;}
+    mint operator*(const mint &m) const {return mint(*this)*=m;}
+    mint operator/(const mint &m) const {return mint(*this)/=m;}
+    mint operator++(int){mint t(*this); *this+=1; return t;}
+    mint operator--(int){mint t(*this); *this-=1; return t;}
+
+    mint operator==(const mint &m) const {return n==m.n;}
+    mint operator!=(const mint &m) const {return n!=m.n;}
+    mint operator-() const {return mint(MOD-n);}
+
+    mint pow(value_type b) const {
+        mint ret(1), m(*this);
+        while(b){
+            if (b & 1) ret*=m;
+            m*=m;
+            b>>=1;
+        }
+        return ret;
+    }
+
+    mint inv() const {return pow(MOD-2);}
+};
+        """
+    'Combination':
+        'prefix': 'combination'
+        'body': """
+//-------------------------------------------------
+//--Combination (depends on ModInt)
+//-------------------------------------------------
+class Combination
+{
+private:
+    ::std::vector<mint> _fact;
+    ::std::vector<mint> _finv;
+public:
+    Combination(int n):_fact(n+1), _finv(n+1){
+        _fact[0] = _fact[1] = 1;
+        _finv[0] = _finv[1] = 1;
+        for(int i=2; i<=n; i++){
+            _fact[i] = _fact[i-1]*i;
+            _finv[i] = _fact[i].inv();
+        }
+    }
+    mint fact(int x){return _fact[x];}
+    mint finv(int x){return _finv[x];}
+    mint comb(int x, int y){return _fact[x]*_finv[y]*_finv[x-y];}
+    mint homo(int x, int y){return comb(x+y-1, y);}
+};
+        """
+    'UnionFind':
+        'prefix': 'unionfind'
+        'body':"""
+//-------------------------------------------------
+//--Union Find tree
+//-------------------------------------------------
+class UnionFind
+{
+private:
+    ::std::vector<int> par;
+    ::std::vector<int> rank;
+public:
+    UnionFind(int n):par(n), rank(n){
+        for(int i=0; i<n; i++){
+            par[i] = i;
+            rank[i] = 0;
+        }
+    }
+    int root(int x){
+        if (par[x]==x) return x;
+        return par[x] = root(par[x]);
+    }
+    bool same(int x, int y){
+        return root(x)==root(y);
+    }
+    void unite(int x, int y){
+        int rx = root(x);
+        int ry = root(y);
+        if (rx==ry) return;
+        if (rank[rx]>rank[ry]){
+            par[ry] = rx;
+        }else{
+            par[rx] = ry;
+            if (rx==ry) rank[ry]++;
+        }
+    }
+};
+        """
+    'SegmentTree':
+        'prefix': 'segmenttree'
+        'body': """
+//-------------------------------------------------
+//--Segment tree
+//-------------------------------------------------
+template<typename T>
+class SegmentTree
+{
+private:
+    using F = function<T(T,T)>;
+    ::std::vector<T> btree;
+    F f, _update;
+    T e;
+    int n;
+public:
+    SegmentTree(int _n, F f, T e, F g=[](T a,T b){return b;})
+         : f(f),e(e),_update(g)
+    {
+        init(_n);
+    }
+    SegmentTree(const ::std::vector<T> &v, F f, T e, F g=[](T a,T b){return b;})
+         : f(f),e(e),_update(g)
+    {
+        int _n = v.size();
+        init(_n);
+        for(int i=0; i<_n; i++) btree[i+n-1] = v[i];
+        build();
+    }
+    void init(int _n){
+        n = 1;
+        while(_n>n) n<<=1;
+        btree.resize(2*n-1, e);
+    }
+    void build(){
+        for(int i=n-2; i>=0; i--) btree[i] = f(btree[2*i+1], btree[2*i+2]);
+    }
+    void update(int k, T a){
+        k += n-1;
+        btree[k] = _update(btree[k], a);
+        while(k>0){
+            --k>>=1;
+            btree[k] = f(btree[2*k+1], btree[2*k+2]);
+        }
+    }
+    T query(int a, int b){
+        T L=e, R=e;
+        a+=n-1; b+=n-1;
+        while(a<b){
+            if (!(a & 1)) L=f(L, btree[a++]);
+            if (!(b & 1)) R=f(btree[--b], R);
+            a>>=1; b>>=1;
+        }
+        return f(L, R);
+    }
+    T operator[](int k){return btree[k+n-1];}
+};
+        """
