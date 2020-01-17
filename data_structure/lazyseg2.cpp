@@ -88,6 +88,6 @@ public:
     }
     //return value proportional to segment's width
     inline E quantify(E laz, int c){
-        return laz;
+        return laz*c;
     }
 };
