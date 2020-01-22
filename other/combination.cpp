@@ -17,6 +17,9 @@ public:
     }
     mint fact(int x){return _fact[x];}
     mint finv(int x){return _finv[x];}
-    mint comb(int x, int y){return _fact[x]*_finv[y]*_finv[x-y];}
+    mint comb(int x, int y){
+        if (y>x || y<0) return 0;
+        return _fact[x]*_finv[y]*_finv[x-y];
+    }
     mint homo(int x, int y){return comb(x+y-1, y);}
 };

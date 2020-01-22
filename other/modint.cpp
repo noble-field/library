@@ -10,7 +10,7 @@ private:
     value_type n;
 public:
     mint():n(0){}
-    mint(value_type _n):n(_n%MOD){}
+    mint(::std::int_fast64_t _n):n(_n<0 ? MOD-(-_n)%MOD : _n%MOD){}
     mint(const mint &m):n(m.n){}
 
     friend ::std::ostream& operator<<(::std::ostream &os, const mint &a){

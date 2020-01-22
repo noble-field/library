@@ -69,13 +69,14 @@ int main(void)
 //-------------------------------------------------
 const ::std::uint_fast64_t MOD = 1e9+7;
 
-class mint{
+class mint
+{
 private:
     using value_type = ::std::uint_fast64_t;
     value_type n;
 public:
     mint():n(0){}
-    mint(value_type _n):n(_n%MOD){}
+    mint(::std::int_fast64_t _n):n(_n<0 ? MOD-(-_n)%MOD : _n%MOD){}
     mint(const mint &m):n(m.n){}
 
     friend ::std::ostream& operator<<(::std::ostream &os, const mint &a){
@@ -140,7 +141,10 @@ public:
     }
     mint fact(int x){return _fact[x];}
     mint finv(int x){return _finv[x];}
-    mint comb(int x, int y){return _fact[x]*_finv[y]*_finv[x-y];}
+    mint comb(int x, int y){
+        if (y>x || y<0) return 0;
+        return _fact[x]*_finv[y]*_finv[x-y];
+    }
     mint homo(int x, int y){return comb(x+y-1, y);}
 };
         """
@@ -198,6 +202,7 @@ private:
     T e;
     int n;
 public:
+    SegmentTree(){}
     SegmentTree(int _n, F f, T e, F g=[](T a,T b){return b;})
          : f(f),e(e),_update(g)
     {
@@ -485,6 +490,93 @@ public:
             data.push_back(::std::vector<int>());
             data.back().push_back(k);
         }
+    }
+};
+        """
+    'Sieve':
+        'prefix': 'Sieve'
+        'body': """
+//-------------------------------------------------
+//--Sieve of Eratosthenes
+//-------------------------------------------------
+class Sieve
+{
+private:
+    ::std::vector<bool> prime;
+public:
+    Sieve(int n):prime(n+1, true){
+        prime[0] = prime[1] = false;
+        for(int i=2; i*i<=n; i++){
+            if (!prime[i]) continue;
+            for(int j=i*2; j<=n; j+=i){
+                prime[j] = false;
+            }
+        }
+    }
+    bool isprime(int x){return prime[x];}
+};
+        """
+    'Extened GCD':
+        'prefix': 'extgcd'
+        'body': """
+//-------------------------------------------------
+//--Extended GCD
+//-------------------------------------------------
+
+int_fast64_t extgcd(int_fast64_t a, int_fast64_t b, int_fast64_t &x, int_fast64_t &y)
+{
+    if (b==0){
+        x = 1; y = 0;
+        return a;
+    }
+    int_fast64_t d = extgcd(b,a%b,y,x);
+    y -= a/b*x;
+    return d;
+}
+        """
+    'Lowest Common Ancestor':
+        'prefix': 'LCA'
+        'body': """
+//-------------------------------------------------
+//--Lowest Common Ancestor (depends on Segment tree)
+//-------------------------------------------------
+class LCA
+{
+private:
+    using Graph = ::std::vector<::std::vector<int> >;
+    // using edge = ::std::pair<int,int>;
+    // using Graph = ::std::vector<::std::vector<edge> >;
+    using P = ::std::pair<int,int>;
+    ::std::vector<P> euler;
+    ::std::vector<int> fidx;
+    int idx;
+    SegmentTree<P> seg;
+    void dfs(int v, int p, int d, Graph &adj){
+        euler.emplace_back(d, v);
+        fidx[v] = idx++;
+        for(auto u:adj[v]){
+            if (u==p) continue;
+            dfs(u,v,d+1,adj);
+            euler.emplace_back(d, v); idx++;
+        }
+        // for(auto e:adj[v]){
+        //     int u,att;
+        //     tie(u,att) = e;
+        //     if (u==p) continue;
+        //     dfs(u,v,d+1,adj);
+        //     euler.emplace_back(d, v); idx++;
+        // }
+    }
+public:
+    LCA(int n, Graph &adj):fidx(n){
+        idx = 0;
+        dfs(0,-1,0,adj);
+        seg = SegmentTree<P>(euler, [](P x, P y){return min(x,y);},make_pair(n,n));
+    }
+    int query(int u, int v){
+        int fmin = min(fidx[u],fidx[v]);
+        int fmax = max(fidx[u],fidx[v]);
+        return seg.query(fmin,fmax+1).second;
     }
 };
         """

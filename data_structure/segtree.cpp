@@ -11,6 +11,7 @@ private:
     T e;
     int n;
 public:
+    SegmentTree(){}
     SegmentTree(int _n, F f, T e, F g=[](T a,T b){return b;})
          : f(f),e(e),_update(g)
     {
