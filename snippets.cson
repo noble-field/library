@@ -28,6 +28,7 @@
 
 #define rep(i,n) for(int i=0;i<(int)(n);i++)
 #define FOR(i,n,m) for(int i=(int)(n); i<=(int)(m); i++)
+#define RFOR(i,n,m) for(int i=(int)(n); i>=(int)(m); i--)
 #define ITR(x,c) for(__typeof(c.begin()) x=c.begin();x!=c.end();x++)
 #define RITR(x,c) for(__typeof(c.rbegin()) x=c.rbegin();x!=c.rend();x++)
 #define setp(n) fixed << setprecision(n)
