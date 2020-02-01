@@ -21,7 +21,7 @@ namespace Enum
     ::std::vector<fint> divisor(fint n)
     {
         ::std::vector<fint> ret;
-        for(fint i=2; i*i<=n; i++){
+        for(fint i=1; i*i<=n; i++){
             if (n%i==0){
                 ret.push_back(i);
                 if (i*i!=n) ret.push_back(n/i);
@@ -34,7 +34,7 @@ namespace Enum
     {
         ::std::vector<::std::pair<fint,fint> > ret;
         fint i=0;
-        for(i=2; i*i<=n; i++){
+        for(i=1; i*i<=n; i++){
             ret.emplace_back(i,n/i);
         }
         for(; i<=n; i++){
