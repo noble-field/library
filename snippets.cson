@@ -765,7 +765,7 @@ public:
         init();
         build(g_);
     }
-    HLD(int n_):n(n),g(n){init();}
+    HLD(int n_):n(n_),g(n_){init();}
     void add_edge(int a, int b){
         g[a].push_back(b);
         g[b].push_back(a);
