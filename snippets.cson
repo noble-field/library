@@ -873,7 +873,8 @@ public:
     Matrix operator+(const Matrix &m) const {return Matrix(*this)+=m;}
     Matrix operator-(const Matrix &m) const {return Matrix(*this)-=m;}
     Matrix operator*(const Matrix &m) const {return Matrix(*this)*=m;}
-    Matrix operator^(const Matrix &m) const {return Matrix(*this)^=m;}
+    Matrix operator*(T c) const {return Matrix(*this)*=c;}
+    Matrix operator^(::std::uint_fast64_t t) const {return Matrix(*this)^=t;}
     Matrix operator-() const {return Matrix(*this)*=-1;}
     V& operator[](int h){return dat[h];}
 };
