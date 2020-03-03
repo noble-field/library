@@ -54,7 +54,7 @@ public:
             for(int j=0; j<m.w; j++)
                 for(int k=0; k<w; k++)
                     ret[i][j]+=dat[i][k]*m.dat[k][j];
-        dat.swap(ret);
+        dat.swap(ret); w = m.w;
         return *this;
     }
     Matrix& operator*=(T c){
