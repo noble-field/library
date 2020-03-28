@@ -105,8 +105,8 @@ public:
     mint operator++(int){mint t(*this); *this+=1; return t;}
     mint operator--(int){mint t(*this); *this-=1; return t;}
 
-    mint operator==(const mint &m) const {return n==m.n;}
-    mint operator!=(const mint &m) const {return n!=m.n;}
+    bool operator==(const mint &m) const {return n==m.n;}
+    bool operator!=(const mint &m) const {return n!=m.n;}
     mint operator-() const {return mint(MOD-n);}
 
     mint pow(value_type b) const {
