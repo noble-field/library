@@ -43,7 +43,7 @@ public:
             }
         }
     }
-    T polation(T x){
+    T interpolation(T x){
         T ret=0, c=1;
         for(int i=n-1;i>=0;i--){
             ret+=poly[i]*c;
