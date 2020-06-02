@@ -1803,7 +1803,7 @@ public:
         return *rp++;
     }
     inline void putc(int c){*wp++ = c;}
-    inline void puts(const char *s){while(*s!='\0') putc(*s++);}
+    inline void puts(const char *s){while(*s!='\\\\0') putc(*s++);}
     inline void writeStr(const string &s){
         for(auto c:s) putc(c);
     }
@@ -1828,6 +1828,6 @@ public:
     FastIO& operator>>(int &a){a=readInt<int>();return *this;}
     FastIO& operator>>(long long &a){a=readInt<long long>();return *this;}
 };
-#define br '\n'
+#define br '\\\\n'
 FastIO io;
         """
