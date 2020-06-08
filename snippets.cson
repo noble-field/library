@@ -1831,3 +1831,225 @@ public:
 #define br '\\\\n'
 FastIO io;
         """
+    'Graph Template':
+        'prefix':'Graph Template'
+        'body':"""
+//-------------------------------------------------
+//--Graph Template
+//-------------------------------------------------
+template<class E>
+struct Graph
+{
+    vector<vector<E> > adj;
+    Graph(int N):adj(N){}
+    virtual void add_edge(int v, E e){adj[v].push_back(e);}
+    vector<E>& operator[](int v){return adj[v];}
+    inline int size(){return adj.size();}
+};
+
+struct NormalEdge {
+    int to;
+    NormalEdge(int to):to(to){}
+};
+
+struct UWGraph : public Graph<NormalEdge>
+{
+    UWGraph(int N):Graph(N){}
+    void add_edge(int v, int e){adj[v].push_back({e});}
+};
+        """
+    'Distance BFS':
+        'prefix':'distBFS'
+        'body':"""
+//-------------------------------------------------
+//--Dist BFS
+//-------------------------------------------------
+template<class E>
+vector<int> distBFS(Graph<E> &G, int s)
+{
+    vector<int> dist(G.size(),-1); dist[s]=0;
+    queue<int> que; que.push(s);
+    while(!que.empty()){
+        int v = que.front(); que.pop();
+        for(auto e:G[v]){
+            if (dist[e.to]!=-1) continue;
+            dist[e.to]=dist[v]+1;
+            que.push(e.to);
+        }
+    }
+    return dist;
+}
+
+template<class E>
+vector<int> dist01BFS(Graph<E> &G, int s)
+{
+    vector<int> dist(G.size(),-1); dist[s]=0;
+    deque<int> deq; deq.push_back(s);
+    while(!deq.empty()){
+        int v = deq.front(); deq.pop_front();
+        for(auto e:G[v]){
+            if (dist[e.to]!=-1) continue;
+            dist[e.to]=dist[v]+e.cost;
+            if (e.cost>0) deq.push_back(e.to);
+            else deq.push_front(e.to);
+        }
+    }
+    return dist;
+}
+        """
+    'Dijkstra':
+        'prefix':'Dijkstra'
+        'body':"""
+//-------------------------------------------------
+//--Dijkstra
+//-------------------------------------------------
+template<class T, class E>
+vector<T> dijkstra(Graph<E> &G, int s, T inf)
+{
+    using P=pair<T,int>;
+    vector<T> dist(G.size(),inf); dist[s]=0;
+    priority_queue<P,vector<P>,greater<P> > que;
+    que.push(P(0,s));
+    while(!que.empty()){
+        T cost; int v;
+        tie(cost,v) = que.top(); que.pop();
+        if (cost>dist[v]) continue;
+        for(auto e:G[v]){
+            if (dist[e.to]>dist[v]+e.cost){
+                dist[e.to]=dist[v]+e.cost;
+                que.push(P(dist[e.to],e.to));
+            }
+        }
+    }
+    return dist;
+}
+
+template<class T, class E>
+vector<T> dijkstra_naive(Graph<E> &G, int s, T inf)
+{
+    int V = G.size();
+    vector<T> dist(V,inf); dist[s]=0;
+    vector<bool> use(V);
+    while(true){
+        int v=-1;
+        for(int i=0;i<V;i++){
+            if(!use[i] && (v==-1||dist[i]<dist[v])){
+                v=i;
+            }
+        }
+        if (v==-1) break;
+        use[v]=true;
+        for(auto e:G[v]){
+            chmin(dist[e.to],dist[v]+e.cost);
+        }
+    }
+    return dist;
+}
+        """
+    'Bellman-Ford':
+        'prefix':'Bellman-Ford'
+        'body':"""
+//-------------------------------------------------
+//--Bellman-Ford
+//-------------------------------------------------
+template<class T, class E>
+vector<T> bellman_ford(Graph<E> &G, int s, T inf)
+{
+    int V = G.size();
+    vector<T> dist(V);
+    for(int i=0;i<V;i++) dist[i]=inf; dist[s]=0;
+    int idx=0;
+    bool update=true;
+    while(update){
+        update=false;
+        for(int v=0;v<V;v++)for(auto e:G[v]){
+            if (dist[v]!=inf && dist[e.to]>dist[v]+e.cost){
+                dist[e.to]=dist[v]+e.cost;
+                update=true;
+            }
+        }
+        if (update && idx==V-1) return vector<T>();
+        idx++;
+    }
+    return dist;
+}
+        """
+    'Kruskal':
+        'prefix':'Kruskal'
+        'body':"""
+//-------------------------------------------------
+//--Kruskal (Based on UnionFind)
+//-------------------------------------------------
+template<class T=int, class E>
+T kruskal(Graph<E> &G)
+{
+    T ret=0;
+    struct kEdge{
+        int from,to; T cost;
+        bool operator<(const kEdge &e){return cost<e.cost;};
+    };
+
+    int V = G.size();
+    UnionFind uf(V);
+    vector<kEdge> es;
+    for(int v=0;v<V;v++)for(auto e:G[v])
+        es.push_back({v,e.to,e.cost});
+    sort(es.begin(),es.end());
+    for(auto e:es){
+        if (!uf.same(e.from,e.to)){
+            uf.unite(e.from,e.to);
+            ret+=e.cost;
+        }
+    }
+    return ret;
+}
+        """
+    'Prim':
+        'prefix':'Prim'
+        'body':"""
+//-------------------------------------------------
+//--Prim
+//-------------------------------------------------
+template<class T=int, class E>
+T prim(Graph<E> &G, int s=0)
+{
+    T ret=0;
+    using P=pair<T,int>;
+    int V = G.size();
+    vector<bool> use(V);
+    priority_queue<P,vector<P>,greater<P> > que;
+    que.push(P(0,s));
+    while(!que.empty()){
+        T cost; int v;
+        tie(cost,v) = que.top(); que.pop();
+        if (use[v]) continue;
+        ret+=cost; use[v]=true;
+        for(auto e:G[v])if(!use[e.to]){
+            que.push(P(e.cost,e.to));
+        }
+    }
+    return ret;
+}
+
+template<class T=int, class E>
+T prim_naive(Graph<E> &G, int s=0)
+{
+    T ret=0;
+    int V = G.size();
+    vector<T> mincost(V,inf); mincost[s]=0;
+    vector<bool> use(V);
+    while(true){
+        int v=-1;
+        for(int i=0;i<V;i++){
+            if (!use[i] && (v==-1||mincost[i]<mincost[v])){
+                v=i;
+            }
+        }
+        if (v==-1) break;
+        ret+=mincost[v]; use[v]=true;
+        for(auto e:G[v]){
+            mincost[e.to]=min(mincost[e.to],e.cost);
+        }
+    }
+}
+        """
