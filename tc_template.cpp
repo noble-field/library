@@ -38,10 +38,21 @@ istream &operator>>(istream &is, pair<A,B> &p){return is>>p.fi>>p.se;}
 
 //-------------------------------------------------
 
+class Class_Name {
+public:
+	T Method_Name(Signature){
+
+	}
+}
+
+// #define ONLINE_JUDGE
+#ifndef ONLINE_JUDGE
+
 int main(void)
 {
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-
 	return 0;
 }
+
+#endif
