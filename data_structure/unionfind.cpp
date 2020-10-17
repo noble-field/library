@@ -4,13 +4,15 @@
 class UnionFind
 {
 private:
-    ::std::vector<int> par;
-    ::std::vector<int> rank;
+    vector<int> par;
+    vector<int> rank;
+    vector<int> sz;
 public:
-    UnionFind(int n):par(n), rank(n){
+    UnionFind(int n):par(n),rank(n),sz(n){
         for(int i=0; i<n; i++){
             par[i] = i;
             rank[i] = 0;
+            sz[i] = 1;
         }
     }
     int root(int x){
@@ -24,11 +26,16 @@ public:
         int rx = root(x);
         int ry = root(y);
         if (rx==ry) return;
-        if (rank[rx]>rank[ry]){
-            par[ry] = rx;
+        if (rank[rx]<rank[ry]){
+            par[rx] = par[ry];
+            sz[ry] += sz[rx];
         }else{
-            par[rx] = ry;
-            if (rx==ry) rank[ry]++;
+            par[ry] = par[rx];
+            sz[rx] += sz[ry];
+            if (rank[rx]==rank[ry]) rank[rx]++;
         }
+    }
+    int size(int x){
+        return sz[root(x)];
     }
 };
