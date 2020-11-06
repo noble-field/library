@@ -1,84 +1,110 @@
 //-------------------------------------------------
-//--Lazy Evaluation Segment tree (Prototype)
+//--Lazy Evaluation Segment tree
 //-------------------------------------------------
-template<typename T, typename E>
+template<typename T, typename E, T(*f)(T,T), T(*g)(T,E), E(*h)(E,E)>
 class LazySegmentTree
 {
 private:
-    using F = ::std::function<T(T,T)>;
-    using G = ::std::function<T(T,E)>;
-    using H = ::std::function<E(E,E)>;
-    F f; G g; H h;
-    int n, height;
-    ::std::vector<T> seg;
-    ::std::vector<E> lazy;
-    T te; E ee;
+    int n,N,height;
+    vector<T> seg;
+    vector<E> lazy;
+    const T te;
+    const E ee;
 public:
-    LazySegmentTree(int _n, F f, G g, H h, T te, E ee)
-        : f(f),g(g),h(h),te(te),ee(ee)
-    {
-        init(_n);
+    LazySegmentTree(){}
+    LazySegmentTree(int n, T te, E ee):n(n),te(te),ee(ee){
+        init();
     }
-    LazySegmentTree(::std::vector<T> &v, F f, G g, H h, T te, E ee)
-        : f(f),g(g),h(h),te(te),ee(ee)
-    {
-        int _n = v.size();
-        init(_n);
-        for(int i=n; i<n+_n; i++) seg[i] = v[i-n];
+    LazySegmentTree(vector<T> &v, T te, E ee):n(v.size()),te(te),ee(ee){
+        init();
+        for(int i=0; i<n; i++)
+            seg[i+N] = v[i];
         build();
     }
-    void init(int _n){
-        n = 1; height=0;
-        while(n<_n) n<<=1, height++;
-        seg.resize(2*n, te);
-        lazy.resize(2*n, ee);
+    void init(){
+        N=height=1;
+        while(N<n) N<<=1, height++;
+        seg.resize(2*N,te);
+        lazy.resize(2*N,ee);
     }
     void build(){
-        for(int i=n-1; i>0; i--) seg[i] = f(seg[i<<1], seg[i<<1|1]);
+        for(int i=N-1; i>=1; i--) 
+            seg[i]=f(seg[i<<1],seg[i<<1|1]);
     }
     T eval(int k){
-        return (lazy[k]==ee) ? seg[k] : g(seg[k],lazy[k]);
+        return (lazy[k]==ee)?seg[k]:g(seg[k],lazy[k]);
     }
-    void waveto(int k){
-        for(int i=height; i>0; i--) wave(k>>i);
-    }
-    void wave(int k){
+    void prop(int k){
+        if (k<N){
+            lazy[k<<1] = h(lazy[k<<1],lazy[k]);
+            lazy[k<<1|1] = h(lazy[k<<1|1],lazy[k]);
+        }
         seg[k] = eval(k);
-        lazy[k<<1] = h(lazy[k<<1],lazy[k]);
-        lazy[k<<1|1] = h(lazy[k<<1|1],lazy[k]);
-        lazy[k] = ee;
+        lazy[k]=ee;
+    }
+    void prop_to(int k){
+        if (k>=2*N) return;
+        for(int i=height-1; i>=0; i--) prop(k>>i);
     }
     void recalc(int k){
-        for(int i=1; i<=height; i++){
+        if (k>=2*N) return;
+        for(int i=1; i<height; i++){
             int m = k>>i;
-            seg[m] = f(eval(m<<1), eval(m<<1|1));
+            seg[m] = f(eval(m<<1),eval(m<<1|1));
         }
     }
-    void update(int a, int b, E x){
-        if (b<=a) return;
-        waveto(a+=n);
-        waveto(b+=n-1);
-        T L=ee, R=ee;
-        int l=a, r=b;
-        while(l<=r){
-            if (l&1) lazy[l] = h(lazy[l], x), l++;
-            if (!(r&1)) lazy[r] = h(lazy[r], x), r--;
+    void apply(int a, int b, E x){
+        prop_to(a+=N);
+        prop_to(b+=N);
+        int l=a,r=b;
+        while(l<r){
+            if (l&1) lazy[l]=h(lazy[l],x), l++;
+            if (r&1) r--, lazy[r]=h(lazy[r],x);
             l>>=1; r>>=1;
         }
         recalc(a);
         recalc(b);
     }
+    T get(int k){
+        prop_to(k+=N);
+        return seg[k];
+    }
+    void set(int k, T x){
+        prop_to(k+=N);
+        seg[k] = x;
+        recalc(k);
+    }
     T query(int a, int b){
-        waveto(a+=n);
-        waveto(b+=n-1);
         T L=te, R=te;
-        int l=a, r=b;
-        while(l<=r){
-            if (l&1) L = f(L, eval(l++));
-            if (!(r&1)) R = f(eval(r--), R);
-            l>>=1; r>>=1;
+        prop_to(a+=N);
+        prop_to(b+=N);
+        while(a<b){
+            if (a&1) L = f(L,eval(a++));
+            if (b&1) R = f(eval(--b),R);
+            a>>=1; b>>=1;
         }
         return f(L,R);
     }
-    T operator[](int k){return query(k, k+1);};
+    T for_all(){return eval(1);}
+    int left_most(int l, bool(*chk)(T)){
+        prop_to(l+=N);
+        int r=2*N;
+        T val=te;
+        while(l<r){
+            if (l&1){
+                if (chk(f(val,eval(l)))) break;
+                val = f(val,eval(l++));
+            }
+            l>>=1; r>>=1;
+        }
+        if (l>=r) return n;
+        while(l<N){
+            l<<=1;
+            if (!chk(f(val,eval(l)))){
+                val = f(val,eval(l++));
+            }
+        }
+        return l-N;
+    }
+    T operator[](int k){return get(k);}
 };

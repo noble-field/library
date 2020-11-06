@@ -5,9 +5,9 @@ template<typename T>
 class pUnionFind
 {
 private:
-    ::std::vector<int> par;
-    ::std::vector<int> rank;
-    ::std::vector<T> diff;
+    vector<int> par;
+    vector<int> rank;
+    vector<T> diff;
 public:
     pUnionFind(int n):par(n), rank(n), diff(n){
         for(int i=0; i<n; i++){

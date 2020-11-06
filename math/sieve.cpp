@@ -4,16 +4,30 @@
 class Sieve
 {
 private:
-    ::std::vector<bool> prime;
+    vector<int> minf;
 public:
-    Sieve(int n):prime(n+1, true){
-        prime[0] = prime[1] = false;
+    Sieve(int n):minf(n+1){
+        iota(minf.begin(),minf.end(),0);
         for(int i=2; i*i<=n; i++){
-            if (!prime[i]) continue;
+            if (!minf[i]==i) continue;
             for(int j=i*2; j<=n; j+=i){
-                prime[j] = false;
+                if (minf[j]==j) minf[j] = i;
             }
         }
     }
-    bool isprime(int x){return prime[x];}
+    using P = pair<int,int>;
+    vector<P> factor(long long N){
+        vector<P> ret;
+        while(N>1){
+            int f = minf[N];
+            int cnt = 0;
+            while(minf[N]==f){
+                N/=f;
+                cnt++;
+            }
+            ret.emplace_back(f,cnt);
+        }
+        return ret;
+    }
+    bool operator[](int x){return minf[x]==x;}
 };

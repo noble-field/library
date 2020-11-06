@@ -5,8 +5,8 @@ template<typename T>
 class Matrix
 {
 private:
-    using V = ::std::vector<T>;
-    using M = ::std::vector<V>;
+    using V = vector<T>;
+    using M = vector<V>;
     M dat;
     int h,w;
 public:
@@ -63,7 +63,7 @@ public:
                 dat[i][j]*=c;
         return *this;
     }
-    Matrix& operator^=(::std::uint_fast64_t t){
+    Matrix& operator^=(uint_fast64_t t){
         assert(h==w);
         Matrix ret = Matrix::getI(h);
         Matrix m(*this);
@@ -79,7 +79,7 @@ public:
     Matrix operator-(const Matrix &m) const {return Matrix(*this)-=m;}
     Matrix operator*(const Matrix &m) const {return Matrix(*this)*=m;}
     Matrix operator*(T c) const {return Matrix(*this)*=c;}
-    Matrix operator^(::std::uint_fast64_t t) const {return Matrix(*this)^=t;}
+    Matrix operator^(uint_fast64_t t) const {return Matrix(*this)^=t;}
     Matrix operator-() const {return Matrix(*this)*=-1;}
     V& operator[](int h){return dat[h];}
 };

@@ -1,23 +1,23 @@
 //-------------------------------------------------
 //--ModInt
 //-------------------------------------------------
-const ::std::uint_fast64_t MOD = 1e9+7;
+const uint_fast64_t MOD = 1e9+7;
 
 class mint
 {
 private:
-    using value_type = ::std::uint_fast64_t;
-    value_type n;
+    using Value = uint_fast64_t;
+    Value n;
 public:
     mint():n(0){}
-    mint(::std::int_fast64_t _n):n(_n<0 ? MOD-(-_n)%MOD : _n%MOD){}
+    mint(int_fast64_t _n):n(_n<0 ? MOD-(-_n)%MOD : _n%MOD){}
     mint(const mint &m):n(m.n){}
 
-    friend ::std::ostream& operator<<(::std::ostream &os, const mint &a){
+    friend ostream& operator<<(ostream &os, const mint &a){
 		return os << a.n;
 	}
-    friend ::std::istream& operator>>(::std::istream &is, mint &a){
-        value_type temp; is>>temp;
+    friend istream& operator>>(istream &is, mint &a){
+        Value temp; is>>temp;
         a = mint(temp);
         return is;
     }
@@ -40,7 +40,7 @@ public:
     bool operator!=(const mint &m) const {return n!=m.n;}
     mint operator-() const {return mint(MOD-n);}
 
-    mint pow(value_type b) const {
+    mint pow(Value b) const {
         mint ret(1), m(*this);
         while(b){
             if (b & 1) ret*=m;

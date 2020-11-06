@@ -1,55 +1,77 @@
 //-------------------------------------------------
 //--Segment tree
 //-------------------------------------------------
-template<typename T>
+template<typename T, T(*f)(T,T), T(*g)(T,T)=nullptr>
 class SegmentTree
 {
 private:
-    using F = function<T(T,T)>;
-    ::std::vector<T> btree;
-    F f, _update;
-    T e;
-    int n;
+    int n,N;
+    vector<T> seg;
+    const T e;
 public:
     SegmentTree(){}
-    SegmentTree(int _n, F f, T e, F g=[](T a,T b){return b;})
-         : f(f),e(e),_update(g)
-    {
-        init(_n);
+    SegmentTree(int n, T e):n(n),e(e){
+        init();
     }
-    SegmentTree(const ::std::vector<T> &v, F f, T e, F g=[](T a,T b){return b;})
-         : f(f),e(e),_update(g)
-    {
-        int _n = v.size();
-        init(_n);
-        for(int i=0; i<_n; i++) btree[i+n-1] = v[i];
+    SegmentTree(vector<T> &v, T e):n(v.size()),e(e){
+        init();
+        for(int i=0; i<n; i++)
+            seg[i+N] = v[i];
         build();
     }
-    void init(int _n){
-        n = 1;
-        while(_n>n) n<<=1;
-        btree.resize(2*n-1, e);
+    void init(){
+        N=1;
+        while(N<n) N<<=1;
+        seg.resize(2*N,e);
     }
     void build(){
-        for(int i=n-2; i>=0; i--) btree[i] = f(btree[2*i+1], btree[2*i+2]);
+        for(int i=N-1; i>=1; i--)
+            seg[i] = f(seg[i<<1],seg[i<<1|1]);
     }
-    void update(int k, T a){
-        k += n-1;
-        btree[k] = _update(btree[k], a);
-        while(k>0){
-            --k>>=1;
-            btree[k] = f(btree[2*k+1], btree[2*k+2]);
+    void climb(int k){
+        while(k>>=1){
+            seg[k] = f(seg[k<<1],seg[k<<1|1]);
         }
+    }
+    void set(int k, T x){
+        seg[k+=N] = x;
+        climb(k);
+    }
+    void apply(int k, int x){
+        assert(g!=nullptr);
+        k+=N;
+        seg[k] = g(seg[k],x);
+        climb(k);
     }
     T query(int a, int b){
+        a+=N; b+=N;
         T L=e, R=e;
-        a+=n-1; b+=n-1;
         while(a<b){
-            if (!(a & 1)) L=f(L, btree[a++]);
-            if (!(b & 1)) R=f(btree[--b], R);
+            if (a&1) L=f(L,seg[a++]);
+            if (b&1) R=f(seg[--b],R);
             a>>=1; b>>=1;
         }
-        return f(L, R);
+        return f(L,R);
     }
-    T operator[](int k){return btree[k+n-1];}
+    T for_all(){return seg[1];}
+    int left_most(int l, bool(*chk)(T)){
+        l+=N; int r=2*N;
+        T val=e;
+        while(l<r){
+            if (l&1){
+                if (chk(f(val,seg[l]))) break;
+                val = f(val,seg[l++]);
+            }
+            l>>=1; r>>=1;
+        }
+        if (l>=r) return n;
+        while(l<N){
+            l<<=1;
+            if (!chk(f(val,seg[l]))){
+                val = f(val,seg[l++]);
+            }
+        }
+        return l-N;
+    }
+    T operator[](int k) {return seg[k+N];}
 };

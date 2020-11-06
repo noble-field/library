@@ -40,8 +40,8 @@ istream &operator>>(istream &is, pair<A,B> &p){return is>>p.fi>>p.se;}
 
 int main(void)
 {
-	cin.tie(0);
-	ios::sync_with_stdio(false);
+    cin.tie(0);
+    ios::sync_with_stdio(false);
 
-	return 0;
+    return 0;
 }
