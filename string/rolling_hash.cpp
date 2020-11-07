@@ -1,50 +1,56 @@
 //-------------------------------------------------
 //--Rolling Hash
 //-------------------------------------------------
-using ull = unsigned long long;
-using Hash = vector<ull>;
 
-const int M_NUM = 2;
-const ull mod[4] = {(ull)1e9+33,(ull)1e9+87,(ull)1e9+93,(ull)1e9+97};
-const ull base = 9973;
-
-class RollingHash
+class Rolling_Hash
 {
 private:
-    int n;
-    vector<ull> _hash[M_NUM], _pow[M_NUM];
+    using ull = unsigned long long;
+    using Hash = vector<ull>;
+    static const int MOD_NUM = 2;
+    static const ull base = 9973;
+    static const ull mod[4];
+    int N;
+    vector<ull> pow[MOD_NUM],hash[MOD_NUM];
 public:
-    RollingHash(const string &s){
-        n = s.size();
-        for(int i=0; i<M_NUM; i++){
-            _hash[i].resize(n+1); _hash[i][0] = 0;
-            _pow[i].resize(n+1); _pow[i][0] = 1;
-            for(int j=0; j<n; j++){
-                _pow[i][j+1] = (_pow[i][j]*M_NUM)%mod[i];
-                _hash[i][j+1] = (_hash[i][j]*M_NUM+s[j])%mod[i];
+    template<typename T>
+    Rolling_Hash(const T &s):N(s.size()){
+        for(int i=0; i<MOD_NUM; i++){
+            pow[i].resize(N+1,0);
+            hash[i].resize(N+1,0);
+            pow[i][0] = 1;
+            for(int j=0; j<N; j++){
+                pow[i][j+1]=(pow[i][j]*base)%mod[i];
+                hash[i][j+1]=(hash[i][j]*base+s[j])%mod[i];
             }
         }
     }
-    bool match(int l, int r, Hash h){
+    bool match(int l, int r, Hash hs){
         bool ret=true;
-        for(int i=0; i<M_NUM; i++){
-            ull value = _hash[i][r]-(_hash[i][l]*_pow[i][r-l])%mod[i];
-            value = (value+mod[i])%mod[i];
-            ret&=(value==h[i]);
+        for(int i=0; i<MOD_NUM; i++){
+            ull right = hash[i][r];
+            ull left = pow[i][r-l]*hash[i][l]%mod[i];
+            ull val = (right<left)?(right+mod[i]-left):right-left;
+            ret&=(val==hs[i]);
         }
         return ret;
     }
-    vector<int> matches(Hash h, int w){
+    vector<int> matches(Hash hs, int sz){
         vector<int> ret;
-        for(int i=0; i<n-w+1; i++)
-            if (match(i,i+w,h)) ret.push_back(i);
+        for(int i=0; i<N-sz+1; i++){
+            if (match(i,i+sz,hs)) ret.push_back(i);
+        }
         return ret;
     }
-    static Hash hash(const string &s){
-        Hash ret(M_NUM);
-        for(int i=0; i<M_NUM; i++)
+    template<typename T>
+    static Hash get_hash(const T &s){
+        Hash ret(MOD_NUM);
+        for(int i=0; i<MOD_NUM; i++)
             for(int j=0; j<s.size(); j++)
-                ret[i]=(ret[i]*M_NUM+s[j])%mod[i];
+                ret[i]=(ret[i]*base+s[j])%mod[i];
         return ret;
     }
+};
+const unsigned long long Rolling_Hash::mod[4]={
+    1000000033,1000000087,1000000093,1000000097
 };
