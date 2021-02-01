@@ -36,6 +36,7 @@ public:
         lazy[k]=ee;
     }
     void prop_to(int k){
+        if (k>=2*N) return;
         for(int i=height-1; i>0; i--) prop(k>>i);
     }
     void apply(int a, int b, E x){
