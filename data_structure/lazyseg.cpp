@@ -106,5 +106,25 @@ public:
         }
         return l-N;
     }
+    int right_most(int r, bool(*chk)(T)){
+        prop_to(r+=N);
+        int l=N-1;
+        T val=te;
+        while(l<r){
+            if (!(r&1) || r==1){
+                if (chk(f(eval(r),val))) break;
+                val = f(eval(r--),val);
+            }
+            l>>=1; r>>=1;
+        }
+        if (l>=r) return -1;
+        while(r<N){
+            r=r<<1|1;
+            if (!chk(f(eval(r),val))){
+                val = f(eval(r--),val);
+            }
+        }
+        return r-N;
+    }
     T operator[](int k){return get(k);}
 };
