@@ -3,6 +3,18 @@ let library_path = "~/kyopro/library"
 
 syntax on
 
+" vim-airline
+let g:airline_theme = 'wombat'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
+" Line Number
+set number
+hi LineNr ctermbg=0 ctermfg=172
+hi CursorLineNr ctermbg=8 ctermfg=172
+set cursorline
+hi clear CursorLine
+
 " Tab Setting
 set tabstop=4
 set shiftwidth=4
