@@ -1,13 +1,10 @@
-export CLICOLOR=1
-export LSCOLORS="GxFxCxDxBxegedabagaced"
+# PATH
 
-export GOPATH=$HOME/go
-export PYENV_ROOT=$HOME/.pyenv
+# Clipboard for WSL
+# export PATH=$PATH:$HOME/win32yank
 
-export GOPRIVATE=github.com/Finatext/logger
-export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:$PYENV_ROOT/bin
-eval "$(pyenv init -)"
+# clipboard for WSL
+alias clip='win32yank.exe -i'
 
 if [ -f ~/.bashrc ] ; then
 	. ~/.bashrc
