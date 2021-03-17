@@ -66,12 +66,20 @@ public:
         build();
     }
     void add_edge(int a, int b){
-        G[a].pb(b);
-        G[b].pb(a);
+        G[a].push_back(b);
+        G[b].push_back(a);
     }
     void build(){
         dfs_sz();
         dfs_hld();
     }
+	int lca(int u, int v){
+		while(true){
+			if (in[u]<in[v]) swap(u,v);
+			if (head[u]==head[v]) break;
+			u = par[head[u]];
+		}
+		return v;
+	}
     inline int operator[](int v){return in[v];};
 };
