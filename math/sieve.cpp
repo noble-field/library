@@ -9,14 +9,14 @@ public:
     Sieve(int n):minf(n+1){
         iota(minf.begin(),minf.end(),0);
         for(int i=2; i*i<=n; i++){
-            if (!minf[i]==i) continue;
+            if (minf[i]!=i) continue;
             for(int j=i*2; j<=n; j+=i){
                 if (minf[j]==j) minf[j] = i;
             }
         }
     }
     using P = pair<int,int>;
-    vector<P> factor(long long N){
+    vector<P> factor(int N){
         vector<P> ret;
         while(N>1){
             int f = minf[N];
