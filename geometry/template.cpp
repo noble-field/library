@@ -28,7 +28,7 @@ struct V {
     V unit(){return V(*this)/=norm();}
     lf arg(){return atan2(y,x);}
     V rot(lf c, lf s){return V(x*c-y*s,x*s+y*c);}
-    V rot(lf a){return rot(sin(a),cos(a));}
+    V rot(lf a){return rot(cos(a),sin(a));}
     V rot90(){return V(-y,x);}
     bool operator<(const V &v){
         if (sgn(x-v.x)) return sgn(x-v.x)<0;
