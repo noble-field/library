@@ -11,12 +11,14 @@ struct Graph
     inline int size(){return adj.size();}
 };
 
-struct NormalEdge {
-    int to;
-    NormalEdge(int to):to(to){}
-};
+namespace graph {
+	struct SimpleEdge {
+		int to;
+		SimpleEdge(int to):to(to){}
+	};
+}
 
-struct UWGraph : public Graph<NormalEdge>
+struct UWGraph : public Graph<graph::SimpleEdge>
 {
     UWGraph(int N):Graph(N){}
     void add_edge(int v, int e){adj[v].push_back({e});}

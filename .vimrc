@@ -2,6 +2,7 @@
 let library_path = "~/kyopro/library"
 
 syntax on
+set belloff=all
 
 " vim-airline
 let g:airline_theme = 'wombat'
@@ -84,3 +85,6 @@ vmap <C-_> gc
 let mapleader = library_path
 nnoremap <C-L> :r<Space><Leader>/
 inoremap <C-L> <Esc>:r<Space><Leader>/
+
+" Save File
+nnoremap ss :w<CR>

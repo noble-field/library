@@ -34,6 +34,15 @@ ostream &operator<<(ostream &os, const pair<A,B> &p){return os<<"("<<p.fi<<","<<
 template<class A, class B>
 istream &operator>>(istream &is, pair<A,B> &p){return is>>p.fi>>p.se;}
 
+template<class T>
+vector<T> make_vec(size_t a){
+	return vector<T>(a);
+}
+template<class T, class... Ts>
+auto make_vec(size_t a, Ts... ts){
+	return vector<decltype(make_vec<T>(ts...))>(a, make_vec<T>(ts...));
+}
+
 /* Some Libraries */
 
 //-------------------------------------------------
