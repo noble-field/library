@@ -127,7 +127,7 @@ public:
 		else fprintf(stdout, "Wrong Answer\n");
 	}
 	void set_query_limit(int limit){nqueries = limit;}
-	int consume_query(){
+	void consume_query(){
 		if (--nqueries < 0){
 			judge(false);
 			fprintf(stderr, "System: Query Limit Exceeds.\n");
