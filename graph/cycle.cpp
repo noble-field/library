@@ -11,7 +11,7 @@ namespace Cycle
     void dfs(int v, int p, Graph<E> &G, bool dir=true){
         st.push(v);
         seen[v] = true;
-        for(auto e:G[v]){
+        for(auto &e:G[v]){
             if (!dir && e.to==p) continue;
             if (finished[e.to]) continue;
             if (seen[e.to] && !finished[e.to]){
@@ -73,7 +73,7 @@ namespace Cycle
         while(i<L){
             ret.push_back(cycle[i]);
             int ni=i;
-            for(auto e:G[cycle[i]]){
+            for(auto &e:G[cycle[i]]){
                 if (!dir && i==0 && e.to==cycle[L-1]) continue;
                 if (!dir && ret.size()<3 && e.to==cycle[0]) continue;
                 if (e.to==cycle[0]){

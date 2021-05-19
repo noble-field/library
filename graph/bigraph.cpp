@@ -7,7 +7,7 @@ namespace BiGraph {
     {
         int ret=(c==0);
         color[v]=c;
-        for(auto e:G[v]){
+        for(auto &e:G[v]){
             if (color[e.to]!=-1){
                 if (color[e.to]==c) return -1;
                 continue;

@@ -12,7 +12,7 @@ vector<T> dijkstra(Graph<E> &G, int s, T inf)
         T cost; int v;
         tie(cost,v) = que.top(); que.pop();
         if (cost>dist[v]) continue;
-        for(auto e:G[v]){
+        for(auto &e:G[v]){
             if (dist[e.to]>dist[v]+e.cost){
                 dist[e.to]=dist[v]+e.cost;
                 que.push(P(dist[e.to],e.to));
@@ -37,7 +37,7 @@ vector<T> dijkstra_naive(Graph<E> &G, int s, T inf)
         }
         if (v==-1) break;
         use[v]=true;
-        for(auto e:G[v]){
+        for(auto &e:G[v]){
             chmin(dist[e.to],dist[v]+e.cost);
         }
     }
