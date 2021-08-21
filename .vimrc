@@ -1,7 +1,6 @@
-" Settings
-let library_path = "~/kyopro/library"
-
 syntax on
+
+" beep-off
 set belloff=all
 
 " vim-airline
@@ -23,7 +22,7 @@ set autoindent
 set smartindent
 
 " Change Vim's Tab
-nnoremap <C-t> :tabe<Space>
+nnoremap <C-t> :tabe 
 nnoremap t gt
 nnoremap T gT
 inoremap <C-t> <Esc>gta
@@ -77,14 +76,40 @@ autocmd FIleType cpp setlocal commentstring=\/\/\ %s
 autocmd FileType python setlocal commentstring=#\ %s
 autocmd FileType ruby setlocal commentstring=$\ %s
 autocmd FileType *.sh setlocal commentstring=#\ %s
-nmap <C-_> gcc
-imap <C-_> <Esc>gcca
-vmap <C-_> gc
+nmap <C-\> gcc
+imap <C-\> <Esc>gcca
+vmap <C-\> gc
+
+" Select All
+nnoremap <C-A> ggVG
+
+" Save
+nnoremap ss :w<CR>
+inoremap <C-W> <Esc>:w<CR>
+
+" fzf
+set rtp+=~/.fzf
+nnoremap <C-P> :Files<CR>
+inoremap <C-P> <Esc>:Files<CR>
+
+function! LibraryPaste()
+	call fzf#run({
+		\ 'sink': 'read',
+		\ 'dir': '~/kyopro/library',
+		\ 'options': '--border --preview "bat  --color=always --style=header,grid --line-range :100 {}"',
+		\ 'down': '40%'
+		\ })
+endfunction
+
+
+" vim-gitgutter
+let g:gitgutter_override_sign_column_highlight = 0
+highlight SignColumn ctermbg=black
+highlight GitGutterAdd ctermfg=green
+highlight GitGutterChange ctermfg=blue
+highlight GitGutterDelete ctermfg=red
+set updatetime=2000
 
 " Library paste
-let mapleader = library_path
-nnoremap <C-L> :r<Space><Leader>/
-inoremap <C-L> <Esc>:r<Space><Leader>/
-
-" Save File
-nnoremap ss :w<CR>
+nnoremap <C-L> :<C-u>call<Space>LibraryPaste()<CR>
+inoremap <C-L> <Esc>:<C-u>call<Space>LibraryPaste()<CR>
