@@ -1,5 +1,5 @@
 # plugin directory
-PLUGIN_PATH="~/.vim/pack/plugin/start"
+PLUGIN_PATH=~/.vim/pack/plugin/start
 [ ! -d $PLUGIN_PATH ] && mkdir -p $PLUGIN_PATH
 cd $PLUGIN_PATH
 
