@@ -1,0 +1,14 @@
+# ls aliases
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# grep aliases
+alias grep='grep --color=auto'
+
+# clipboard
+alias clip='win32yank.exe -i'
+alias paste='win32yank.exe -o'
+
+
