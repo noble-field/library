@@ -58,13 +58,13 @@ vnoremap <C-S-Down> "zx"zp`[V`]
 vnoremap <BS> "_d
 vnoremap <C-x> d
 vnoremap <C-S-c> y
-inoremap <C-v> <Esc>pa
+inoremap <C-v> <C-o>p
 inoremap <C-BS> <Esc>dba
 
 " Indent Line(s)
 nnoremap <Tab> >>
 nnoremap <S-Tab> <<
-inoremap <S-Tab> <Esc><<i
+inoremap <S-Tab> <C-o><<
 vnoremap <Tab> >`[V`]
 vnoremap <S-Tab> <`[V`]
 
@@ -86,9 +86,11 @@ vmap <C-\> gc
 " Select All
 nnoremap <C-A> ggVG
 
+" Select Word
+nnoremap ww viw
+
 " Save
 nnoremap ss :w<CR>
-inoremap <C-W> <Esc>:w<CR>
 
 " fzf
 set rtp+=~/.fzf
@@ -102,9 +104,6 @@ highlight GitGutterAdd ctermfg=green
 highlight GitGutterChange ctermfg=blue
 highlight GitGutterDelete ctermfg=red
 set updatetime=300
-
-" Paste on WSL
-nnoremap bp :<C-u>r! win32yank.exe -o<CR>
 
 " Library paste
 function! LibraryPaste()
@@ -181,3 +180,81 @@ command! -nargs=0 Format :call CocAction('format')
 " popup colors
 hi Pmenu ctermbg=white ctermfg=black
 hi PmenuSel ctermbg=cyan ctermfg=black
+
+" clpping command
+function! ClipSource(path)
+  call system('win32yank.exe -i < ' . a:path)
+  echo a:path . ' clipped.'
+endfunction
+
+command! -nargs=0 Clip :call ClipSource(expand('%:p'))
+nnoremap cc :Clip<CR>
+
+" testing command
+function! CompileSource()
+  redraw
+  echo 'compiling...'
+  call system('g++ -O2 '.expand('%:p'))
+endfunction
+
+autocmd ColorScheme * hi MyPopupColor ctermbg=black
+
+function! ResultFilter(winid, key)
+  if a:key == 'q'
+	call popup_close(a:winid)
+  elseif a:key == 'd'
+    
+  endif
+  return 0
+endfunction
+
+function! TestSource(...)
+  redraw
+  echo 'running...'
+  if a:0 >= 1
+	let l:result = split(system(expand('./a.out < ' . a:1)), "\n")
+	call popup_create(l:result, #{
+	  \ border: [], minwidth: winwidth(0)/2, minheight: &lines/2,
+	  \ maxwidth: winwidth(0)/2, maxheight: &lines-4, scrollbar: 1, padding: [0,1,0,1],
+	  \ highlight: 'MyPopupColor', filter: 'ResultFilter', close: 'click'
+      \ })
+  else
+	let l:result = split(system(expand('./a.out < in')), "\n")
+    call popup_create(l:result, #{ 
+	  \ border: [], minwidth: winwidth(0)/2, minheight: &lines/2,
+	  \ maxwidth: winwidth(0)/2, maxheight: &lines-4, scrollbar: 1, padding: [0,1,0,1],
+	  \ highlight: 'MyPopupColor', filter: 'ResultFilter', close: 'click'
+      \ })
+  endif
+  redraw
+  echo 'complete.'
+endfunction
+
+function! CompileAndTest(...)
+  call CompileSource()
+  if a:0 >= 1
+    call TestSource(a:1)
+  else
+	call TestSource()
+  endif
+endfunction
+
+command! -nargs=? CTest :call CompileAndTest(<f-args>)
+command! -nargs=? Test :call TestSource(<f-args>)
+
+nnoremap <F5> :CTest<CR>
+nnoremap <F9> :Test<CR>
+
+function! ReplaceClip()
+  0,$d
+  let l:text = split(system('win32yank.exe -o'), "\r\n")
+  call append(0, text)
+endfunction
+
+function! AppendClip()
+  let l:text = split(system('win32yank.exe -o'), "\r\n")
+  call append(".", text)
+endfunction
+
+nnoremap aa :call ReplaceClip()<CR>
+nnoremap bp :call AppendClip()<CR>
